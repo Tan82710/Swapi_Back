@@ -21,6 +21,7 @@ app.get('/', (req, res) => {
     res.send('Hello SWAPI')
 })
 
+//Récupération des personnages
 app.get('/people', (req, res) => {
     axios.get('https://swapi.dev/api/people/').then((response) => {
         console.log(response.data)
@@ -32,12 +33,63 @@ app.get('/people', (req, res) => {
    
 })
 
+//Récupération des détails des personnages
 app.get(`/detail/:id`, (req, res) => {
-    console.log('ID' + req.params.id)
     let id = req.params.id
     axios.get(`https://swapi.dev/api/people/${id}`).then((response) => {
-        console.log(response.data)
+        //response.data = données des personnages
         let result = response.data;  
+        res.json(result)
+    }).catch((err) => {
+        console.log(err);
+    });
+   
+})
+
+//Récupération des films
+app.get(`/films/`, (req, res) => {
+    let id = req.params.id
+    axios.get(`https://swapi.dev/api/films/`).then((response) => {
+        let result = response.data;  
+        res.json(result)
+    }).catch((err) => {
+        console.log(err);
+    });
+   
+})
+
+//Récupération des véhicules
+app.get(`/vehicles/`, (req, res) => {
+    let id = req.params.id
+    axios.get(`https://swapi.dev/api/vehicles/`).then((response) => {
+        let result = response.data;  
+        console.log(result)
+        res.json(result)
+    }).catch((err) => {
+        console.log(err);
+    });
+   
+})
+
+//Récupération des espèces
+app.get(`/species/`, (req, res) => {
+    let id = req.params.id
+    axios.get(`https://swapi.dev/api/species/`).then((response) => {
+        let result = response.data;  
+        console.log(result)
+        res.json(result)
+    }).catch((err) => {
+        console.log(err);
+    });
+   
+})
+
+//Récupération des vaisseaux
+app.get(`/starships/`, (req, res) => {
+    let id = req.params.id
+    axios.get(`https://swapi.dev/api/starships/`).then((response) => {
+        let result = response.data;  
+        console.log(result)
         res.json(result)
     }).catch((err) => {
         console.log(err);
