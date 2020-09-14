@@ -1,7 +1,27 @@
+if(process.env.NODE_ENV !== 'production'){
+    require('dotenv').config()
+}
+
 const express = require('express');
 const app = express()
 const axios = require("axios");
+const passport = require('passport');
+// const localStrategy = require('passport-local').Strategy;
+const bodyParser = require('body-parser')
+const bcrypt = require('bcrypt')
+const cors = require('cors')
+const session = require('express-session')
+const cookieParser = require('cookie-parser')
+const flash = require('express-flash')
 
+const initializePassport = require('./passport')
+
+const users = [{id : Date.now().toString(), username : "admin", password : "caribou"}]
+initializePassport(
+    passport,
+    username => users.find(user => user.username === username),
+    id => users.find(user => user.id === id)
+)
 
 //Debug CORS Policy
 app.use((req, res, next) => {
@@ -17,10 +37,48 @@ app.use((req, res, next) => {
     next();
 });
 
+
+//Test réponse passport.js
 app.get('/', (req, res) => {
-    res.send('Hello SWAPI')
+    res.send('PASSPORT OK')
 })
 
+app.get('/validate', (req, res) => {
+    res.send('PASSPORT NOT OK')
+})
+
+// Middleware
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: false}));
+app.use(cors({
+    origin: "http://localhost:3000",
+    credentials: true
+}))
+app.use(flash())
+app.use(session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false
+}))
+app.use(cookieParser("secretcode"))
+app.use(passport.initialize())
+app.use(passport.session())
+
+// Routes
+app.post('/login', 
+    passport.authenticate('local', {
+        successRedirect: '/',
+        failureRedirect: '',
+        failureFlash: true
+}))
+
+// app.post('/login', 
+//     passport.authenticate('local', { failureRedirect: '/'}),
+//     function(req, res) {
+//         console.log('RES' + res)
+//         res.redirect('/validate')
+//     })
+    
 //Récupération des personnages
 app.get('/people', (req, res) => {
     axios.get('https://swapi.dev/api/people/').then((response) => {
@@ -96,6 +154,24 @@ app.get(`/starships/`, (req, res) => {
     });
    
 })
+
+// Passport.js
+// passport.use(new LocalStrategy(
+//     function(username='amdin', password = 'caribou', done) {
+//       User.findOne({ username: username }, function (err, user) {
+//         if (err) { return done(err); }
+//         if (!user) { return done(null, false); }
+//         if (!user.verifyPassword(password)) { return done(null, false); }
+//         return done(null, user);
+//       });
+//     }
+//   ));
+
+//   app.post('/login', 
+//   passport.authenticate('local', { failureRedirect: '/login' }),
+//   function(req, res) {
+//     res.redirect('/');
+//   });
 
 const PORT = process.env.PORT || 4200
 app.listen(PORT, () => {
