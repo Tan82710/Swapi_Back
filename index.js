@@ -71,13 +71,6 @@ app.post('/login',
         failureRedirect: '',
         failureFlash: true
 }))
-
-// app.post('/login', 
-//     passport.authenticate('local', { failureRedirect: '/'}),
-//     function(req, res) {
-//         console.log('RES' + res)
-//         res.redirect('/validate')
-//     })
     
 //Récupération des personnages
 app.get('/people', (req, res) => {
@@ -154,24 +147,6 @@ app.get(`/starships/`, (req, res) => {
     });
    
 })
-
-// Passport.js
-// passport.use(new LocalStrategy(
-//     function(username='amdin', password = 'caribou', done) {
-//       User.findOne({ username: username }, function (err, user) {
-//         if (err) { return done(err); }
-//         if (!user) { return done(null, false); }
-//         if (!user.verifyPassword(password)) { return done(null, false); }
-//         return done(null, user);
-//       });
-//     }
-//   ));
-
-//   app.post('/login', 
-//   passport.authenticate('local', { failureRedirect: '/login' }),
-//   function(req, res) {
-//     res.redirect('/');
-//   });
 
 const PORT = process.env.PORT || 4200
 app.listen(PORT, () => {
